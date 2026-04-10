@@ -281,6 +281,7 @@ namespace GmmLib
         bool TrackTableUsage(TT_TYPE Type, bool IsL1, GMM_GFX_ADDRESS TileAdr, bool NullMapped,GMM_LIB_CONTEXT* pGmmLibContext);
         bool IsTableNullMapped(TT_TYPE Type, bool IsL1, GMM_GFX_ADDRESS TileAdr,GMM_LIB_CONTEXT *pGmmLibContext);
         void UpdatePoolFence(GMM_UMD_SYNCCONTEXT * UmdContext, bool ClearNode);
+        virtual ~Table() = default;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////
