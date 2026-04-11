@@ -339,6 +339,31 @@ namespace GmmLib
         {
             pTTL1 = NULL;
         }
+        MidLevelTable(const MidLevelTable&) = delete;
+        MidLevelTable& operator=(const MidLevelTable&) = delete;
+        MidLevelTable(MidLevelTable&& other) noexcept : Table(other), pTTL1(other.pTTL1)
+        {
+            other.pTTL1 = NULL;
+        }
+        MidLevelTable& operator=(MidLevelTable&& other) noexcept
+        {
+            if(this != &other)
+            {
+                // Release current pTTL1 chain
+                LastLevelTable* item = pTTL1;
+                while(item)
+                {
+                    LastLevelTable* next = item->Next();
+                    delete item;
+                    item = next;
+                }
+                // Steal from source
+                static_cast<Table&>(*this) = other;
+                pTTL1       = other.pTTL1;
+                other.pTTL1 = NULL;
+            }
+            return *this;
+        }
         MidLevelTable(GMM_PAGETABLEPool *Pool, int NodeIdx, SyncInfo Info) : MidLevelTable()
         {
             PoolElem = Pool;

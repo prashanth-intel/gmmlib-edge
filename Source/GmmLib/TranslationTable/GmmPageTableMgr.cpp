@@ -387,19 +387,17 @@ GmmLib::GmmPageTableMgr::GmmPageTableMgr(GMM_DEVICE_CALLBACKS_INT *DeviceCB, uin
 
     if(status == GMM_SUCCESS && !(AuxTTObj))
     {
-        if(ptr->AuxTTObj)
+        bool hadAuxTTObj = (ptr->AuxTTObj != NULL);
+        if(hadAuxTTObj)
         {
             ptr->AuxTTObj->PageTableMgr = this;
         }
-        *this = *ptr;
+        *this = static_cast<GmmPageTableMgr &&>(*ptr);
         //Don't initialize PoolLock until any of AuxTable object created
-        if(ptr->AuxTTObj )
+        if(hadAuxTTObj)
         {
             InitializeCriticalSection(&PoolLock);
-
         }
-        //Delete temporary ptr, but don't release allocated PageTable Obj.
-        ptr->AuxTTObj = NULL;
     }
 
 ERROR_CASE:
@@ -727,6 +725,30 @@ GmmLib::GmmPageTableMgr::GmmPageTableMgr()
 
     memset(&DeviceCb, 0, sizeof(GMM_DEVICE_CALLBACKS));
     memset(&DeviceCbInt, 0, sizeof(GMM_DEVICE_CALLBACKS_INT));
+}
+
+GmmLib::GmmPageTableMgr &GmmLib::GmmPageTableMgr::operator=(GmmPageTableMgr &&other) noexcept
+{
+    if(this != &other)
+    {
+        EngType             = other.EngType;
+        AuxTTObj            = other.AuxTTObj;
+        pPool               = other.pPool;
+        NumNodePoolElements = other.NumNodePoolElements;
+        pClientContext      = other.pClientContext;
+        hCsr                = other.hCsr;
+        memcpy(&DeviceCb,    &other.DeviceCb,    sizeof(GMM_DEVICE_CALLBACKS));
+        memcpy(&DeviceCbInt, &other.DeviceCbInt, sizeof(GMM_DEVICE_CALLBACKS_INT));
+        memcpy(&TTCb,        &other.TTCb,        sizeof(GMM_TRANSLATIONTABLE_CALLBACKS));
+        // PoolLock belongs to 'this' and must not be transferred
+        // Null out the moved-from object's owning pointers
+        other.AuxTTObj            = NULL;
+        other.pPool               = NULL;
+        other.NumNodePoolElements = 0;
+        other.pClientContext      = NULL;
+        other.hCsr                = NULL;
+    }
+    return *this;
 }
 
 

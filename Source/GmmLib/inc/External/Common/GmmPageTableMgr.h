@@ -118,8 +118,9 @@ namespace GmmLib
         HANDLE hCsr;  // OCL per-device command stream receiver handle for aubcapture
     public:
         GmmPageTableMgr();
-        GmmPageTableMgr(GMM_DEVICE_CALLBACKS_INT *, uint32_t TTFlags, GmmClientContext  *pClientContextIn); // Allocates memory for indicate TT’s root-tables, initializes common node-pool
-        
+        GmmPageTableMgr(GMM_DEVICE_CALLBACKS_INT *, uint32_t TTFlags, GmmClientContext  *pClientContextIn); // Allocates memory for indicate TT’s root-tables, initializes common node-pool        GmmPageTableMgr(const GmmPageTableMgr&) = delete;
+        GmmPageTableMgr& operator=(const GmmPageTableMgr&) = delete;
+        GmmPageTableMgr& operator=(GmmPageTableMgr&& other) noexcept;
         
         //GMM_VIRTUAL GMM_GFX_ADDRESS GetTRL3TableAddr();
         GMM_VIRTUAL GMM_GFX_ADDRESS GetAuxL3TableAddr();
