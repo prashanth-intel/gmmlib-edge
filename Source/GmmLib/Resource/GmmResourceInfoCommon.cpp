@@ -2160,6 +2160,7 @@ uint8_t GMM_STDCALL GmmLib::GmmResourceInfoCommon::GetMappingSpanDesc(GMM_GET_MA
                 }
                 else
                 {
+                    __GMM_ASSERT(pMapping->Scratch.Tile.Depth > 0);
                     pMapping->Scratch.Slices =
                     GFX_CEIL_DIV(pTexInfo->Depth, pMapping->Scratch.Tile.Depth);
                 }
