@@ -297,15 +297,15 @@ GmmLib::GMM_PAGETABLEPool *GmmLib::GmmPageTableMgr::__GetFreePoolNode(uint32_t *
     //No free pool node, allocate new
     if(!PoolNodeFound)
     {
+        EXIT_CRITICAL_SECTION
         GMM_PAGETABLEPool *Pool = NULL;
         if(Pool = __AllocateNodePool(IdxMultiplier * PAGE_SIZE, PoolType))
         {
             __GMM_ASSERT(Pool->GetPoolType() == PoolType);
-
             *FreePoolNodeIdx = 0;
-            EXIT_CRITICAL_SECTION
             return Pool;
         }
+        return NULL;
     }
 
     EXIT_CRITICAL_SECTION
