@@ -134,6 +134,9 @@ namespace GmmLib
     class GmmPageTablePool
     {
     private:
+        GmmPageTablePool(const GmmPageTablePool &) = delete;
+        GmmPageTablePool &operator=(const GmmPageTablePool &) = delete;
+
                                        //PageTablePool allocation descriptor
         GMM_RESOURCE_INFO* pGmmResInfo;   
         HANDLE             PoolHandle;
@@ -331,7 +334,36 @@ namespace GmmLib
     class MidLevelTable : public Table
     {
     private:
+        MidLevelTable(const MidLevelTable &) = delete;
+        MidLevelTable &operator=(const MidLevelTable &) = delete;
+
         LastLevelTable  *pTTL1;                    //linked list of L1 tables
+    public:
+        MidLevelTable &operator=(MidLevelTable &&other) noexcept
+        {
+            if(this != &other)
+            {
+                // Release any existing L1 tables
+                LastLevelTable *item = pTTL1;
+                while(item)
+                {
+                    LastLevelTable *next = item->Next();
+                    delete item;
+                    item = next;
+                }
+                // Transfer base members
+                PoolElem    = other.PoolElem;
+                BBInfo      = other.BBInfo;
+                PoolNodeIdx = other.PoolNodeIdx;
+                pTTL1       = other.pTTL1;
+                // Leave source empty
+                other.PoolElem    = NULL;
+                other.pTTL1       = NULL;
+                other.PoolNodeIdx = PAGETABLE_POOL_MAX_NODES;
+            }
+            return *this;
+        }
+    private:
 
     public:
         MidLevelTable() :Table()
@@ -428,6 +460,9 @@ namespace GmmLib
         public GmmMemAllocator
     {
     protected:
+        PageTable(const PageTable &) = delete;
+        PageTable &operator=(const PageTable &) = delete;
+
         const TT_TYPE TTType;                      //PageTable is AuxTT
         const int NodesPerTable;                   //Aux L2/L3 has 32KB size, Aux L1 has 4KB -can't use as selector for PageTable is AuxTT
                                                    // 1 node for TR-table, 8 nodes for Aux-Table L2, 2 nodes for Aux-table L1

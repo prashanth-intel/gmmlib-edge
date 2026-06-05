@@ -99,6 +99,9 @@ namespace GmmLib
                      public GmmMemAllocator
     {
     private:
+        GmmPageTableMgr(const GmmPageTableMgr &) = delete;
+        GmmPageTableMgr &operator=(const GmmPageTableMgr &) = delete;
+
         GMM_ENGINE_TYPE EngType;             //PageTable managed @ device-level (specifies engine associated with the device)
 
         AuxTable* AuxTTObj;                  //Auxiliary Translation Table obj
