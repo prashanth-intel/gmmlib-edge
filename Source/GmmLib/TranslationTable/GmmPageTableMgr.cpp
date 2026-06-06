@@ -391,7 +391,15 @@ GmmLib::GmmPageTableMgr::GmmPageTableMgr(GMM_DEVICE_CALLBACKS_INT *DeviceCB, uin
         {
             ptr->AuxTTObj->PageTableMgr = this;
         }
-        *this = *ptr;
+        // Manually copy members instead of using deleted operator=
+        this->AuxTTObj = ptr->AuxTTObj;
+        this->pPool = ptr->pPool;
+        this->NumNodePoolElements = ptr->NumNodePoolElements;
+        memcpy(&this->DeviceCbInt, &ptr->DeviceCbInt, sizeof(GMM_DEVICE_CALLBACKS_INT));
+        memcpy(&this->DeviceCb, &ptr->DeviceCb, sizeof(GMM_DEVICE_CALLBACKS));
+        memcpy(&this->TTCb, &ptr->TTCb, sizeof(GMM_TRANSLATIONTABLE_CALLBACKS));
+        this->hCsr = ptr->hCsr;
+        this->EngType = ptr->EngType;
         //Don't initialize PoolLock until any of AuxTable object created
         if(ptr->AuxTTObj )
         {
@@ -502,8 +510,6 @@ GMM_STATUS GmmLib::GmmPageTableMgr::UpdateAuxTable(const GMM_DDI_UPDATEAUXTABLE 
         }
     }
 
-    ENTER_CRITICAL_SECTION
-
     if(UpdateReq->Map)
     {
         //Get AuxL1e data (other than CCS-adr) from main surface
@@ -591,7 +597,6 @@ GMM_STATUS GmmLib::GmmPageTableMgr::UpdateAuxTable(const GMM_DDI_UPDATEAUXTABLE 
                     if(Status != GMM_SUCCESS)
                     {
                         GMM_ASSERTDPF(0, "Insufficient memory, free resources and try again");
-                        EXIT_CRITICAL_SECTION
                         return Status;
                     }
                 }
@@ -604,7 +609,6 @@ GMM_STATUS GmmLib::GmmPageTableMgr::UpdateAuxTable(const GMM_DDI_UPDATEAUXTABLE 
         AuxTTObj->InvalidateTable(UpdateReq->UmdContext, UpdateReq->BaseGpuVA, UpdateReq->BaseResInfo->GetSizeMainSurface(), UpdateReq->DoNotWait);
     }
 
-    EXIT_CRITICAL_SECTION
     return GMM_SUCCESS;
 }
 
