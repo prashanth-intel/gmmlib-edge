@@ -2163,7 +2163,8 @@ namespace GmmLib
 	        bool IscompressionEn              = DriverProtection.CompressionEnReq ? true : false;
 	        DriverProtection.CacheableNoSnoop = false;
 
-	        DriverProtection.PATIndex = GetGmmLibContext()->GetCachePolicyObj()->CachePolicyGetPATIndex(NULL, Usage, &IscompressionEn, (bool)(Surf.Flags.Info.Cacheable));
+	        uint32_t PATIndex = GetGmmLibContext()->GetCachePolicyObj()->CachePolicyGetPATIndex(NULL, Usage, &IscompressionEn, (bool)(Surf.Flags.Info.Cacheable));
+	        DriverProtection.PATIndex = PATIndex & 0x1F;
 
 	        DriverProtection.CompressionEnReq = IscompressionEn ? true : false;
 
