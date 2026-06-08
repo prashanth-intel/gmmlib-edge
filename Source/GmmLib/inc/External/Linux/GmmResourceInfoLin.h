@@ -37,6 +37,17 @@ namespace GmmLib
                                 public GmmResourceInfoCommon
     {
         public:
+            GmmResourceInfoLin& operator=(const GmmResourceInfoLin& other)
+            {
+                GmmResourceInfoCommon::operator=(static_cast<const GmmResourceInfoCommon&>(other));
+                return *this;
+            }
+            GmmResourceInfoLin& operator=(GmmResourceInfoLin&& other) noexcept
+            {
+                GmmResourceInfoCommon::operator=(static_cast<const GmmResourceInfoCommon&>(other));
+                return *this;
+            }
+
             /* Constructors */
             GmmResourceInfoLin()
             {

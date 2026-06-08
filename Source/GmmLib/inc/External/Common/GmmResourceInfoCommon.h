@@ -172,6 +172,10 @@ namespace GmmLib
 
                 return *this;
             }
+            GmmResourceInfoCommon& operator=(GmmResourceInfoCommon&& rhs) noexcept
+            {
+                return operator=(static_cast<const GmmResourceInfoCommon&>(rhs));
+            }
 
             virtual ~GmmResourceInfoCommon()
             {
