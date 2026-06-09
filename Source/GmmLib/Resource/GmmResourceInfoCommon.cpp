@@ -2165,9 +2165,10 @@ uint8_t GMM_STDCALL GmmLib::GmmResourceInfoCommon::GetMappingSpanDesc(GMM_GET_MA
                     GFX_CEIL_DIV(pTexInfo->Depth, pMapping->Scratch.Tile.Depth);
                 }
 
-                if(pTexInfo->Pitch ==
-                   (GFX_ALIGN(pTexInfo->BaseWidth, pMapping->Scratch.Tile.Width) /
-                    pMapping->Scratch.Element.Width * BytesPerElement))
+                if((pMapping->Scratch.Element.Width > 0) &&
+                   (pTexInfo->Pitch ==
+                    (GFX_ALIGN(pTexInfo->BaseWidth, pMapping->Scratch.Tile.Width) /
+                     pMapping->Scratch.Element.Width * BytesPerElement)))
                 {
                     // Treat Each LOD0 MIP as Single, Large Mapping Row...
                     pMapping->Scratch.Rows = 1;
