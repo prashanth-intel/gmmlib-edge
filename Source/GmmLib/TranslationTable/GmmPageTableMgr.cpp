@@ -473,6 +473,12 @@ GMM_STATUS GmmLib::GmmPageTableMgr::InitContextAuxTableRegister(HANDLE CmdQHandl
 /////////////////////////////////////////////////////////////////////////////////////
 GMM_STATUS GmmLib::GmmPageTableMgr::UpdateAuxTable(const GMM_DDI_UPDATEAUXTABLE *UpdateReq)
 {
+    if(!AuxTTObj)
+    {
+        GMM_ASSERTDPF(0, "Invalid AuxTable update request, AuxTT object is null");
+        return GMM_INVALIDPARAM;
+    }
+
     if(GetAuxL3TableAddr() == 0ULL)
     {
         GMM_ASSERTDPF(0, "Invalid AuxTable update request, AuxTable is not initialized");
@@ -506,6 +512,12 @@ GMM_STATUS GmmLib::GmmPageTableMgr::UpdateAuxTable(const GMM_DDI_UPDATEAUXTABLE 
 
     if(UpdateReq->Map)
     {
+        if(!AuxTTObj)
+        {
+            GMM_ASSERTDPF(0, "Invalid AuxTable update request, AuxTT object is null");
+            return GMM_INVALIDPARAM;
+        }
+
         //Get AuxL1e data (other than CCS-adr) from main surface
         uint64_t   PartialL1e = AuxTTObj->CreateAuxL1Data(UpdateReq->BaseResInfo).Value;
         GMM_STATUS Status     = GMM_SUCCESS;
@@ -600,6 +612,12 @@ GMM_STATUS GmmLib::GmmPageTableMgr::UpdateAuxTable(const GMM_DDI_UPDATEAUXTABLE 
     }
     else
     {
+        if(!AuxTTObj)
+        {
+            GMM_ASSERTDPF(0, "Invalid AuxTable invalidate request, AuxTT object is null");
+            return GMM_INVALIDPARAM;
+        }
+
         //Invalidate all mappings for given main surface
         AuxTTObj->InvalidateTable(UpdateReq->UmdContext, UpdateReq->BaseGpuVA, UpdateReq->BaseResInfo->GetSizeMainSurface(), UpdateReq->DoNotWait);
     }
